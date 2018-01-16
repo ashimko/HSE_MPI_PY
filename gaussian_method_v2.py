@@ -30,7 +30,7 @@ integral = numpy.zeros(1)
 total = numpy.zeros(1)
 
 
-integral[0] = integrateRange(local_a, local_b, local_n)
+integral[0] = integrateRange(local_a, local_b)
 
 comm.Reduce(integral, total, op=MPI.SUM, root=0)
 
