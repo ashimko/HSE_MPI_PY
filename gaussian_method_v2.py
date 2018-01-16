@@ -1,5 +1,3 @@
-#trapParallel_2.py
-#example to run: mpiexec -n 4 python26 trapParallel_2.py 0.0 1.0 10000
 import numpy
 # import sys
 from mpi4py import MPI
@@ -11,8 +9,6 @@ size = comm.Get_size()
 
 start_time = MPI.Wtime()
 
-
-
 a = 0.0
 b = 1.0
 n = 10000
@@ -20,7 +16,7 @@ n = 10000
 def f(x):
         return 4/(1+x*x)
 
-def integrateRange(a, b, n):
+def integrateRange(a, b):
     integral = ((b-a)/2)*(f((a+b) / 2 - (b-a) / (2 * numpy.math.sqrt(3))) + f((a+b) / 2 + (b-a) / (2 * numpy.math.sqrt(3))))
     return integral
 
