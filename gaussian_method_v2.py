@@ -11,59 +11,33 @@ size = comm.Get_size()
 
 start_time = MPI.Wtime()
 
-#takes in command-line arguments [a,b,n]
-# a = float(sys.argv[1])
-# b = float(sys.argv[2])
-# n = int(sys.argv[3])
+
 
 a = 0.0
 b = 1.0
 n = 10000
 
-#we arbitrarily define a function to integrate
-# def f(x):
-#         return x*x
-
 def f(x):
         return 4/(1+x*x)
-
-#this is the serial version of the trapezoidal rule
-#parallelization occurs by dividing the range among processes
-# def integrateRange(a, b, n):
-#         integral = -(f(a) + f(b))/2.0
-#         # n+1 endpoints, but n trapazoids
-#         for x in numpy.linspace(a,b,n+1):
-#                         integral = integral + f(x)
-#         integral = integral * (b-a)/n
-#         return integral
 
 def integrateRange(a, b, n):
     integral = ((b-a)/2)*(f((a+b) / 2 - (b-a) / (2 * numpy.math.sqrt(3))) + f((a+b) / 2 + (b-a) / (2 * numpy.math.sqrt(3))))
     return integral
 
-#h is the step size. n is the total number of trapezoids
 h = (b-a)/n
-#local_n is the number of trapezoids each process will calculate
-#note that size must divide n
 local_n = n/size
 
-#we calculate the interval that each process handles
-#local_a is the starting point and local_b is the endpoint
 local_a = a + rank*local_n*h
 local_b = local_a + local_n*h
 
-#initializing variables. mpi4py requires that we pass numpy objects.
 integral = numpy.zeros(1)
 total = numpy.zeros(1)
 
-# perform local computation. Each process integrates its own interval
+
 integral[0] = integrateRange(local_a, local_b, local_n)
 
-# communication
-# root node receives results with a collective "reduce"
 comm.Reduce(integral, total, op=MPI.SUM, root=0)
 
-# root process prints results
 if comm.rank == 0:
-        print("With n =", n, "trapezoids, our estimate of the integral from"\
+        print("With n =", n, "gaussians, our estimate of the integral from"\
         , a, "to", b, "is", total, "time elapsed: ", MPI.Wtime() - start_time)
